@@ -4,6 +4,43 @@ use sdd_coverage::config::{Cli, Command};
 
 use clap::Parser;
 
+// @req AR-CLI-001
+#[test]
+fn shared_config_flags_identical_across_subcommands() {
+    let scan = Cli::try_parse_from([
+        "sdd-coverage",
+        "scan",
+        "--requirements",
+        "req.yaml",
+        "--source",
+        "./src",
+        "--tests",
+        "./tests",
+    ])
+    .unwrap();
+
+    let serve = Cli::try_parse_from([
+        "sdd-coverage",
+        "serve",
+        "--requirements",
+        "req.yaml",
+        "--source",
+        "./src",
+        "--tests",
+        "./tests",
+    ])
+    .unwrap();
+
+    let (scan_cfg, serve_cfg) = match (scan.command, serve.command) {
+        (Command::Scan(s), Command::Serve(v)) => (s.config, v.config),
+        _ => panic!("expected Scan and Serve"),
+    };
+
+    assert_eq!(scan_cfg.requirements, serve_cfg.requirements);
+    assert_eq!(scan_cfg.source, serve_cfg.source);
+    assert_eq!(scan_cfg.tests, serve_cfg.tests);
+}
+
 // @req FR-CLI-001
 #[test]
 fn parse_scan_with_required_flags() {
