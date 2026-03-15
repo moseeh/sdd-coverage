@@ -47,6 +47,8 @@ pub struct Annotation {
     pub req_id: String,
     // @req FR-SCAN-002
     pub annotation_type: AnnotationType,
+    // @req FR-SCAN-003
+    pub snippet: String,
 }
 
 // @req FR-PARSE-001

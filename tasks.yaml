@@ -54,9 +54,9 @@ tasks:
   - id: TASK-007
     requirementId: FR-SCAN-003
     title: "Implement code snippet capture and permission error handling"
-    status: open
+    status: done
     createdAt: "2026-03-15T00:00:00Z"
-    updatedAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-16T02:22:31Z"
 
   - id: TASK-008
     requirementId: FR-SCAN-004

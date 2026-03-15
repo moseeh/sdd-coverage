@@ -8,7 +8,7 @@ fn scans_rust_source_files() {
     let base = Path::new("fixtures/scan_project");
     let source = base.join("src");
     let tests = base.join("tests");
-    let annotations = scan_files(&source, &tests, base);
+    let (annotations, _) = scan_files(&source, &tests, base);
 
     let rust_annotations: Vec<_> = annotations
         .iter()
@@ -27,7 +27,7 @@ fn scans_typescript_files() {
     let base = Path::new("fixtures/scan_project");
     let source = base.join("src");
     let tests = base.join("tests");
-    let annotations = scan_files(&source, &tests, base);
+    let (annotations, _) = scan_files(&source, &tests, base);
 
     let ts_annotations: Vec<_> = annotations
         .iter()
@@ -43,7 +43,7 @@ fn scans_python_files_with_hash_comments() {
     let base = Path::new("fixtures/scan_project");
     let source = base.join("src");
     let tests = base.join("tests");
-    let annotations = scan_files(&source, &tests, base);
+    let (annotations, _) = scan_files(&source, &tests, base);
 
     let py_annotations: Vec<_> = annotations
         .iter()
@@ -59,7 +59,7 @@ fn scans_go_files() {
     let base = Path::new("fixtures/scan_project");
     let source = base.join("src");
     let tests = base.join("tests");
-    let annotations = scan_files(&source, &tests, base);
+    let (annotations, _) = scan_files(&source, &tests, base);
 
     let go_annotations: Vec<_> = annotations
         .iter()
@@ -75,7 +75,7 @@ fn scans_dart_files() {
     let base = Path::new("fixtures/scan_project");
     let source = base.join("src");
     let tests = base.join("tests");
-    let annotations = scan_files(&source, &tests, base);
+    let (annotations, _) = scan_files(&source, &tests, base);
 
     let dart_annotations: Vec<_> = annotations
         .iter()
@@ -91,7 +91,7 @@ fn skips_unsupported_extensions() {
     let base = Path::new("fixtures/scan_project");
     let source = base.join("src");
     let tests = base.join("tests");
-    let annotations = scan_files(&source, &tests, base);
+    let (annotations, _) = scan_files(&source, &tests, base);
 
     let json_annotations: Vec<_> = annotations
         .iter()
@@ -106,7 +106,7 @@ fn captures_correct_line_numbers() {
     let base = Path::new("fixtures/scan_project");
     let source = base.join("src");
     let tests = base.join("tests");
-    let annotations = scan_files(&source, &tests, base);
+    let (annotations, _) = scan_files(&source, &tests, base);
 
     let main_rs: Vec<_> = annotations
         .iter()
@@ -125,7 +125,7 @@ fn scans_both_source_and_test_paths() {
     let base = Path::new("fixtures/scan_project");
     let source = base.join("src");
     let tests = base.join("tests");
-    let annotations = scan_files(&source, &tests, base);
+    let (annotations, _) = scan_files(&source, &tests, base);
 
     let test_annotations: Vec<_> = annotations
         .iter()
@@ -140,7 +140,7 @@ fn returns_relative_paths() {
     let base = Path::new("fixtures/scan_project");
     let source = base.join("src");
     let tests = base.join("tests");
-    let annotations = scan_files(&source, &tests, base);
+    let (annotations, _) = scan_files(&source, &tests, base);
 
     for annotation in &annotations {
         assert!(
@@ -160,6 +160,6 @@ fn handles_empty_directory() {
     std::fs::create_dir_all(&source).unwrap();
     std::fs::create_dir_all(&tests).unwrap();
 
-    let annotations = scan_files(&source, &tests, dir.path());
+    let (annotations, _) = scan_files(&source, &tests, dir.path());
     assert!(annotations.is_empty());
 }

@@ -39,8 +39,19 @@ fn is_test_file(path: &Path, tests_dir: &Path) -> bool {
     stem.starts_with("test_") || stem.ends_with("_test") || name.contains(".test.")
 }
 
+// @req FR-SCAN-003
+fn capture_snippet(lines: &[&str], line_index: usize) -> String {
+    let end = (line_index + 2).min(lines.len());
+    lines[line_index..end].join("\n")
+}
+
 // @req FR-SCAN-001
-fn scan_directory(dir: &Path, base: &Path, tests_dir: &Path) -> Vec<Annotation> {
+fn scan_directory(
+    dir: &Path,
+    base: &Path,
+    tests_dir: &Path,
+    warnings: &mut Vec<String>,
+) -> Vec<Annotation> {
     let mut annotations = Vec::new();
 
     for entry in WalkDir::new(dir).into_iter().filter_map(|e| e.ok()) {
@@ -49,9 +60,17 @@ fn scan_directory(dir: &Path, base: &Path, tests_dir: &Path) -> Vec<Annotation> 
             continue;
         }
 
+        // @req FR-SCAN-003
         let content = match std::fs::read_to_string(path) {
             Ok(c) => c,
-            Err(_) => continue,
+            Err(e) => {
+                warnings.push(format!(
+                    "Permission error reading {}: {}",
+                    path.display(),
+                    e
+                ));
+                continue;
+            }
         };
 
         let relative = path
@@ -67,14 +86,17 @@ fn scan_directory(dir: &Path, base: &Path, tests_dir: &Path) -> Vec<Annotation> 
             AnnotationType::Impl
         };
 
+        let lines: Vec<&str> = content.lines().collect();
         let regex = req_regex();
-        for (line_num, line) in content.lines().enumerate() {
+        for (line_num, line) in lines.iter().enumerate() {
             for cap in regex.captures_iter(line) {
                 annotations.push(Annotation {
                     file: relative.clone(),
                     line: line_num + 1,
                     req_id: cap[1].to_string(),
                     annotation_type: annotation_type.clone(),
+                    // @req FR-SCAN-003
+                    snippet: capture_snippet(&lines, line_num),
                 });
             }
         }
@@ -84,8 +106,9 @@ fn scan_directory(dir: &Path, base: &Path, tests_dir: &Path) -> Vec<Annotation> 
 }
 
 // @req FR-SCAN-001
-pub fn scan_files(source: &Path, tests: &Path, base: &Path) -> Vec<Annotation> {
-    let mut annotations = scan_directory(source, base, tests);
-    annotations.extend(scan_directory(tests, base, tests));
-    annotations
+pub fn scan_files(source: &Path, tests: &Path, base: &Path) -> (Vec<Annotation>, Vec<String>) {
+    let mut warnings = Vec::new();
+    let mut annotations = scan_directory(source, base, tests, &mut warnings);
+    annotations.extend(scan_directory(tests, base, tests, &mut warnings));
+    (annotations, warnings)
 }

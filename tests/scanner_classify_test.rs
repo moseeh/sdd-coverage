@@ -9,7 +9,7 @@ fn files_under_tests_path_classified_as_test() {
     let base = Path::new("fixtures/scan_project");
     let source = base.join("src");
     let tests = base.join("tests");
-    let annotations = scan_files(&source, &tests, base);
+    let (annotations, _) = scan_files(&source, &tests, base);
 
     let test_annotations: Vec<_> = annotations
         .iter()
@@ -27,7 +27,7 @@ fn files_under_source_path_classified_as_impl() {
     let base = Path::new("fixtures/scan_project");
     let source = base.join("src");
     let tests = base.join("tests");
-    let annotations = scan_files(&source, &tests, base);
+    let (annotations, _) = scan_files(&source, &tests, base);
 
     let impl_annotations: Vec<_> = annotations
         .iter()
@@ -55,7 +55,7 @@ fn test_prefix_pattern_classified_as_test() {
     )
     .unwrap();
 
-    let annotations = scan_files(&source, &tests, dir.path());
+    let (annotations, _) = scan_files(&source, &tests, dir.path());
     assert_eq!(annotations.len(), 1);
     assert_eq!(annotations[0].annotation_type, AnnotationType::Test);
 }
@@ -76,7 +76,7 @@ fn test_suffix_pattern_classified_as_test() {
     )
     .unwrap();
 
-    let annotations = scan_files(&source, &tests, dir.path());
+    let (annotations, _) = scan_files(&source, &tests, dir.path());
     assert_eq!(annotations.len(), 1);
     assert_eq!(annotations[0].annotation_type, AnnotationType::Test);
 }
@@ -97,7 +97,7 @@ fn dot_test_pattern_classified_as_test() {
     )
     .unwrap();
 
-    let annotations = scan_files(&source, &tests, dir.path());
+    let (annotations, _) = scan_files(&source, &tests, dir.path());
     assert_eq!(annotations.len(), 1);
     assert_eq!(annotations[0].annotation_type, AnnotationType::Test);
 }
@@ -117,7 +117,7 @@ fn regular_source_file_classified_as_impl() {
     )
     .unwrap();
 
-    let annotations = scan_files(&source, &tests, dir.path());
+    let (annotations, _) = scan_files(&source, &tests, dir.path());
     assert_eq!(annotations.len(), 1);
     assert_eq!(annotations[0].annotation_type, AnnotationType::Impl);
 }
