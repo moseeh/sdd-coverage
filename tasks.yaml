@@ -72,6 +72,13 @@ tasks:
     createdAt: "2026-03-15T00:00:00Z"
     updatedAt: "2026-03-16T02:26:49Z"
 
+  - id: TASK-026
+    requirementId: FR-SCAN-006
+    title: "Ensure scanner skips unsupported and binary files"
+    status: open
+    createdAt: "2026-03-16T02:27:31Z"
+    updatedAt: "2026-03-16T02:27:31Z"
+
   # Phase 4: Coverage
   - id: TASK-010
     requirementId: FR-COV-001
