@@ -18,9 +18,9 @@ tasks:
   - id: TASK-003
     requirementId: FR-PARSE-002
     title: "Implement tasks.yaml parser with status enum validation"
-    status: open
+    status: done
     createdAt: "2026-03-15T00:00:00Z"
-    updatedAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-16T01:55:19Z"
 
   - id: TASK-004
     requirementId: FR-PARSE-003

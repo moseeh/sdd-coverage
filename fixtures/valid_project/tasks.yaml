@@ -1,0 +1,20 @@
+tasks:
+  - id: TASK-001
+    requirementId: FR-TEST-001
+    title: Implement feature
+    status: done
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+  - id: TASK-002
+    requirementId: FR-TEST-001
+    title: Write tests
+    status: open
+    assignee: alice
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+  - id: TASK-003
+    requirementId: AR-TEST-001
+    title: Refactor module
+    status: in_progress
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
