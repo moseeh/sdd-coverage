@@ -5,7 +5,7 @@ use std::sync::OnceLock;
 use regex::Regex;
 use walkdir::WalkDir;
 
-use crate::models::{Annotation, AnnotationType};
+use crate::models::{Annotation, AnnotationType, Task};
 
 static REQ_PATTERN: OnceLock<Regex> = OnceLock::new();
 
@@ -122,5 +122,13 @@ pub fn find_orphan_annotations<'a>(
     annotations
         .iter()
         .filter(|a| !requirement_ids.contains(a.req_id.as_str()))
+        .collect()
+}
+
+// @req FR-SCAN-005
+pub fn find_orphan_tasks<'a>(tasks: &'a [Task], requirement_ids: &HashSet<&str>) -> Vec<&'a Task> {
+    tasks
+        .iter()
+        .filter(|t| !requirement_ids.contains(t.requirement_id.as_str()))
         .collect()
 }

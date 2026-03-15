@@ -68,9 +68,9 @@ tasks:
   - id: TASK-009
     requirementId: FR-SCAN-005
     title: "Implement orphan task detection"
-    status: open
+    status: done
     createdAt: "2026-03-15T00:00:00Z"
-    updatedAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-16T02:26:49Z"
 
   # Phase 4: Coverage
   - id: TASK-010
