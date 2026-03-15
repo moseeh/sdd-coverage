@@ -31,6 +31,14 @@ pub struct Task {
     pub updated_at: DateTime<Utc>,
 }
 
+// @req FR-SCAN-001
+#[derive(Debug, Clone, PartialEq)]
+pub struct Annotation {
+    pub file: String,
+    pub line: usize,
+    pub req_id: String,
+}
+
 // @req FR-PARSE-001
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
