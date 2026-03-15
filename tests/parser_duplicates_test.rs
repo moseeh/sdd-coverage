@@ -49,13 +49,13 @@ fn rejects_duplicate_task_ids() {
         &tasks_path,
         r#"
 tasks:
-  - id: TASK-DUP
+  - id: TASK-001
     requirementId: FR-TEST-001
     title: First
     status: open
     createdAt: "2026-03-15T00:00:00Z"
     updatedAt: "2026-03-15T00:00:00Z"
-  - id: TASK-DUP
+  - id: TASK-001
     requirementId: FR-TEST-001
     title: Duplicate
     status: done
@@ -68,7 +68,7 @@ tasks:
     let err = parse_tasks(&req_path).unwrap_err();
     assert!(matches!(err, ParseError::DuplicateId { .. }));
     let msg = err.to_string();
-    assert!(msg.contains("TASK-DUP"));
+    assert!(msg.contains("TASK-001"));
 }
 
 // @req FR-PARSE-004

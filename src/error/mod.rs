@@ -18,6 +18,12 @@ pub enum ParseError {
         id: String,
         path: PathBuf,
     },
+    // @req FR-PARSE-005
+    InvalidIdFormat {
+        id: String,
+        expected: &'static str,
+        path: PathBuf,
+    },
 }
 
 // @req FR-PARSE-003
@@ -48,6 +54,16 @@ impl fmt::Display for ParseError {
             // @req FR-PARSE-004
             ParseError::DuplicateId { id, path } => {
                 write!(f, "Duplicate ID '{}' in {}", id, path.display())
+            }
+            // @req FR-PARSE-005
+            ParseError::InvalidIdFormat { id, expected, path } => {
+                write!(
+                    f,
+                    "Invalid ID format '{}' in {}: expected {}",
+                    id,
+                    path.display(),
+                    expected
+                )
             }
         }
     }

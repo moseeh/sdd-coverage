@@ -1,8 +1,24 @@
 use std::collections::HashSet;
 use std::path::Path;
+use std::sync::OnceLock;
+
+use regex::Regex;
 
 use crate::error::ParseError;
 use crate::models::{Requirement, Task};
+
+static REQ_ID_PATTERN: OnceLock<Regex> = OnceLock::new();
+static TASK_ID_PATTERN: OnceLock<Regex> = OnceLock::new();
+
+// @req FR-PARSE-005
+fn req_id_regex() -> &'static Regex {
+    REQ_ID_PATTERN.get_or_init(|| Regex::new(r"^(FR|AR)-[A-Z]+-\d{3}$").unwrap())
+}
+
+// @req FR-PARSE-005
+fn task_id_regex() -> &'static Regex {
+    TASK_ID_PATTERN.get_or_init(|| Regex::new(r"^TASK-\d{3}$").unwrap())
+}
 
 // @req FR-PARSE-001
 #[derive(serde::Deserialize)]
@@ -34,6 +50,13 @@ fn deserialize_yaml<T: serde::de::DeserializeOwned>(
 pub fn parse_requirements(path: &Path) -> Result<Vec<Requirement>, ParseError> {
     let content = read_file(path)?;
     let file: RequirementsFile = deserialize_yaml(&content, path)?;
+    // @req FR-PARSE-005
+    validate_ids(
+        file.requirements.iter().map(|r| &r.id),
+        req_id_regex(),
+        "TYPE-DOMAIN-NNN (e.g. FR-SCAN-001)",
+        path,
+    )?;
     check_duplicate_ids(file.requirements.iter().map(|r| &r.id), path)?;
     Ok(file.requirements)
 }
@@ -53,8 +76,34 @@ pub fn parse_tasks(requirements_path: &Path) -> Result<Vec<Task>, ParseError> {
 
     let content = read_file(&tasks_path)?;
     let file: TasksFile = deserialize_yaml(&content, &tasks_path)?;
+    // @req FR-PARSE-005
+    validate_ids(
+        file.tasks.iter().map(|t| &t.id),
+        task_id_regex(),
+        "TASK-NNN (e.g. TASK-001)",
+        &tasks_path,
+    )?;
     check_duplicate_ids(file.tasks.iter().map(|t| &t.id), &tasks_path)?;
     Ok(file.tasks)
+}
+
+// @req FR-PARSE-005
+fn validate_ids<'a>(
+    ids: impl Iterator<Item = &'a String>,
+    pattern: &Regex,
+    expected: &'static str,
+    path: &Path,
+) -> Result<(), ParseError> {
+    for id in ids {
+        if !pattern.is_match(id) {
+            return Err(ParseError::InvalidIdFormat {
+                id: id.clone(),
+                expected,
+                path: path.to_path_buf(),
+            });
+        }
+    }
+    Ok(())
 }
 
 // @req FR-PARSE-004
