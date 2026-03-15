@@ -27,6 +27,13 @@ requirements:
     createdAt: "2026-03-15T00:00:00Z"
     updatedAt: "2026-03-15T00:00:00Z"
 
+  - id: FR-PARSE-005
+    type: FR
+    title: Validate ID formats
+    description: "Parser MUST validate that requirement IDs match the pattern TYPE-DOMAIN-NNN where TYPE is FR or AR, DOMAIN is one or more uppercase letters, and NNN is a zero-padded number. Parser MUST validate that task IDs match the pattern TASK-NNN. Invalid formats MUST be treated as a parse error."
+    createdAt: "2026-03-16T02:35:44Z"
+    updatedAt: "2026-03-16T02:35:44Z"
+
   - id: FR-SCAN-001
     type: FR
     title: Scan source files for @req annotations

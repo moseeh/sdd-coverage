@@ -36,6 +36,13 @@ tasks:
     createdAt: "2026-03-16T02:09:08Z"
     updatedAt: "2026-03-16T02:11:03Z"
 
+  - id: TASK-027
+    requirementId: FR-PARSE-005
+    title: "Validate requirement and task ID formats"
+    status: open
+    createdAt: "2026-03-16T02:35:44Z"
+    updatedAt: "2026-03-16T02:35:44Z"
+
   # Phase 3: Scanner
   - id: TASK-005
     requirementId: FR-SCAN-001
