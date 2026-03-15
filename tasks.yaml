@@ -1,0 +1,175 @@
+tasks:
+  # Phase 1: Skeleton
+  - id: TASK-001
+    requirementId: AR-CLI-001
+    title: "Set up project skeleton with clap CLI, shared config, models, and error types"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  # Phase 2: Parser
+  - id: TASK-002
+    requirementId: FR-PARSE-001
+    title: "Implement requirements.yaml parser with field validation"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: TASK-003
+    requirementId: FR-PARSE-002
+    title: "Implement tasks.yaml parser with status enum validation"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: TASK-004
+    requirementId: FR-PARSE-003
+    title: "Implement parse error reporting and duplicate ID detection"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  # Phase 3: Scanner
+  - id: TASK-005
+    requirementId: FR-SCAN-001
+    title: "Implement recursive file scanner with multi-language @req extraction"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: TASK-006
+    requirementId: FR-SCAN-002
+    title: "Implement annotation classification (impl vs test by path/filename)"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: TASK-007
+    requirementId: FR-SCAN-003
+    title: "Implement code snippet capture and permission error handling"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: TASK-008
+    requirementId: FR-SCAN-004
+    title: "Implement orphan annotation detection"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: TASK-009
+    requirementId: FR-SCAN-005
+    title: "Implement orphan task detection"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  # Phase 4: Coverage
+  - id: TASK-010
+    requirementId: FR-COV-001
+    title: "Implement per-requirement coverage status computation"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: TASK-011
+    requirementId: FR-COV-002
+    title: "Implement project-level coverage summary"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: TASK-012
+    requirementId: FR-COV-003
+    title: "Implement stats breakdown and run_scan orchestrator"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  # Phase 5: CLI
+  - id: TASK-013
+    requirementId: FR-CLI-001
+    title: "Implement scan subcommand with --strict exit code logic"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  # Phase 6: API
+  - id: TASK-014
+    requirementId: FR-CLI-002
+    title: "Implement serve subcommand with router and startup scan"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: TASK-015
+    requirementId: FR-API-001
+    title: "Implement GET /healthcheck endpoint"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: TASK-016
+    requirementId: FR-API-002
+    title: "Implement GET /stats endpoint"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: TASK-017
+    requirementId: FR-API-003
+    title: "Implement GET /requirements with filtering and sorting"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: TASK-018
+    requirementId: FR-API-004
+    title: "Implement GET /requirements/{id} with linked artifacts"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: TASK-019
+    requirementId: FR-API-005
+    title: "Implement GET /annotations with type and orphan filtering"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: TASK-020
+    requirementId: FR-API-006
+    title: "Implement GET /tasks with status, orphan filtering, and sorting"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: TASK-021
+    requirementId: FR-API-007
+    title: "Implement POST /scan with async execution and concurrent rejection"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: TASK-022
+    requirementId: FR-API-008
+    title: "Implement GET /scan status endpoint"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: TASK-023
+    requirementId: FR-ERR-001
+    title: "Implement graceful error handling across all endpoints"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  # Phase 7: Self-hosting
+  - id: TASK-024
+    requirementId: AR-SELF-001
+    title: "Add @req annotations to all functions and verify self-scan passes --strict"
+    status: open
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
