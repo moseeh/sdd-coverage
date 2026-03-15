@@ -1,5 +1,6 @@
 use std::path::Path;
 
+use crate::error::ParseError;
 use crate::models::{Requirement, Task};
 
 // @req FR-PARSE-001
@@ -8,14 +9,30 @@ struct RequirementsFile {
     requirements: Vec<Requirement>,
 }
 
+// @req FR-PARSE-003
+fn read_file(path: &Path) -> Result<String, ParseError> {
+    std::fs::read_to_string(path).map_err(|e| ParseError::FileNotFound {
+        path: path.to_path_buf(),
+        source: e,
+    })
+}
+
+// @req FR-PARSE-003
+fn deserialize_yaml<T: serde::de::DeserializeOwned>(
+    content: &str,
+    path: &Path,
+) -> Result<T, ParseError> {
+    serde_yaml::from_str(content).map_err(|e| ParseError::MalformedYaml {
+        path: path.to_path_buf(),
+        line: e.location().map(|loc| loc.line()),
+        message: e.to_string(),
+    })
+}
+
 // @req FR-PARSE-001
-pub fn parse_requirements(path: &Path) -> Result<Vec<Requirement>, String> {
-    let content = std::fs::read_to_string(path)
-        .map_err(|e| format!("Failed to read {}: {}", path.display(), e))?;
-
-    let file: RequirementsFile = serde_yaml::from_str(&content)
-        .map_err(|e| format!("Failed to parse {}: {}", path.display(), e))?;
-
+pub fn parse_requirements(path: &Path) -> Result<Vec<Requirement>, ParseError> {
+    let content = read_file(path)?;
+    let file: RequirementsFile = deserialize_yaml(&content, path)?;
     Ok(file.requirements)
 }
 
@@ -26,17 +43,13 @@ struct TasksFile {
 }
 
 // @req FR-PARSE-002
-pub fn parse_tasks(requirements_path: &Path) -> Result<Vec<Task>, String> {
+pub fn parse_tasks(requirements_path: &Path) -> Result<Vec<Task>, ParseError> {
     let tasks_path = requirements_path
         .parent()
         .map(|p| p.join("tasks.yaml"))
         .unwrap_or_else(|| "tasks.yaml".into());
 
-    let content = std::fs::read_to_string(&tasks_path)
-        .map_err(|e| format!("Failed to read {}: {}", tasks_path.display(), e))?;
-
-    let file: TasksFile = serde_yaml::from_str(&content)
-        .map_err(|e| format!("Failed to parse {}: {}", tasks_path.display(), e))?;
-
+    let content = read_file(&tasks_path)?;
+    let file: TasksFile = deserialize_yaml(&content, &tasks_path)?;
     Ok(file.tasks)
 }

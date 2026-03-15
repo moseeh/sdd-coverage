@@ -24,10 +24,10 @@ tasks:
 
   - id: TASK-004
     requirementId: FR-PARSE-003
-    title: "Implement parse error reporting and duplicate ID detection"
-    status: open
+    title: "Implement parse error reporting"
+    status: done
     createdAt: "2026-03-15T00:00:00Z"
-    updatedAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-16T02:05:27Z"
 
   # Phase 3: Scanner
   - id: TASK-005
