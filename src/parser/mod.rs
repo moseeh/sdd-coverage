@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::path::Path;
 
 use crate::error::ParseError;
@@ -33,6 +34,7 @@ fn deserialize_yaml<T: serde::de::DeserializeOwned>(
 pub fn parse_requirements(path: &Path) -> Result<Vec<Requirement>, ParseError> {
     let content = read_file(path)?;
     let file: RequirementsFile = deserialize_yaml(&content, path)?;
+    check_duplicate_ids(file.requirements.iter().map(|r| &r.id), path)?;
     Ok(file.requirements)
 }
 
@@ -51,5 +53,23 @@ pub fn parse_tasks(requirements_path: &Path) -> Result<Vec<Task>, ParseError> {
 
     let content = read_file(&tasks_path)?;
     let file: TasksFile = deserialize_yaml(&content, &tasks_path)?;
+    check_duplicate_ids(file.tasks.iter().map(|t| &t.id), &tasks_path)?;
     Ok(file.tasks)
+}
+
+// @req FR-PARSE-004
+fn check_duplicate_ids<'a>(
+    ids: impl Iterator<Item = &'a String>,
+    path: &Path,
+) -> Result<(), ParseError> {
+    let mut seen = HashSet::new();
+    for id in ids {
+        if !seen.insert(id) {
+            return Err(ParseError::DuplicateId {
+                id: id.clone(),
+                path: path.to_path_buf(),
+            });
+        }
+    }
+    Ok(())
 }

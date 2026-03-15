@@ -13,6 +13,11 @@ pub enum ParseError {
         line: Option<usize>,
         message: String,
     },
+    // @req FR-PARSE-004
+    DuplicateId {
+        id: String,
+        path: PathBuf,
+    },
 }
 
 // @req FR-PARSE-003
@@ -40,6 +45,10 @@ impl fmt::Display for ParseError {
                     write!(f, "Malformed YAML in {}: {}", path.display(), message)
                 }
             },
+            // @req FR-PARSE-004
+            ParseError::DuplicateId { id, path } => {
+                write!(f, "Duplicate ID '{}' in {}", id, path.display())
+            }
         }
     }
 }
