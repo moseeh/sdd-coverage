@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::path::Path;
 use std::sync::OnceLock;
 
@@ -111,4 +112,15 @@ pub fn scan_files(source: &Path, tests: &Path, base: &Path) -> (Vec<Annotation>,
     let mut annotations = scan_directory(source, base, tests, &mut warnings);
     annotations.extend(scan_directory(tests, base, tests, &mut warnings));
     (annotations, warnings)
+}
+
+// @req FR-SCAN-004
+pub fn find_orphan_annotations<'a>(
+    annotations: &'a [Annotation],
+    requirement_ids: &HashSet<&str>,
+) -> Vec<&'a Annotation> {
+    annotations
+        .iter()
+        .filter(|a| !requirement_ids.contains(a.req_id.as_str()))
+        .collect()
 }
