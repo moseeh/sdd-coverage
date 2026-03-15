@@ -19,7 +19,7 @@ and computes SDD traceability coverage metrics.
 
 ## Rules
 - Read requirements.yaml before implementing anything
-- Every function MUST have a // @req SCS-XXX-NNN annotation
+- Every function MUST have a // @req FR-XXX-NNN or // @req AR-XXX-NNN annotation
 - Every implementation commit MUST reference a requirement ID
 - Scanner logic MUST be shared between CLI and HTTP modes
 - No panics under any input
@@ -27,9 +27,9 @@ and computes SDD traceability coverage metrics.
 
 ## Commit Convention
 chore: description                            <- setup, config
-feat(module): description [SCS-XXX-NNN]       <- implementation
-test(module): description [SCS-XXX-NNN]       <- tests
-fix(module): description [SCS-XXX-NNN]        <- bug fixes
+feat(module): description [REQ-ID]       <- implementation
+test(module): description [REQ-ID]       <- tests
+fix(module): description [REQ-ID]        <- bug fixes
 
 ## Project Structure
 src/          implementation
