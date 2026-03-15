@@ -29,6 +29,13 @@ tasks:
     createdAt: "2026-03-15T00:00:00Z"
     updatedAt: "2026-03-16T02:05:27Z"
 
+  - id: TASK-025
+    requirementId: FR-PARSE-004
+    title: "Implement duplicate ID detection for requirements and tasks"
+    status: open
+    createdAt: "2026-03-16T02:09:08Z"
+    updatedAt: "2026-03-16T02:09:08Z"
+
   # Phase 3: Scanner
   - id: TASK-005
     requirementId: FR-SCAN-001
