@@ -91,9 +91,9 @@ tasks:
   - id: TASK-013
     requirementId: FR-CLI-001
     title: "Implement scan subcommand with --strict exit code logic"
-    status: open
+    status: done
     createdAt: "2026-03-15T00:00:00Z"
-    updatedAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-16T01:14:04Z"
 
   # Phase 6: API
   - id: TASK-014
