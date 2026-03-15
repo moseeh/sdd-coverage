@@ -1,0 +1,182 @@
+requirements:
+  - id: FR-PARSE-001
+    type: FR
+    title: Parse requirements.yaml
+    description: "Service MUST read requirements.yaml from the path provided via --requirements flag and validate that every entry contains id, type, title, description, createdAt, and updatedAt fields. Type MUST be FR or AR. createdAt and updatedAt MUST be valid ISO 8601 timestamps."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-PARSE-002
+    type: FR
+    title: Parse tasks.yaml
+    description: "Service MUST read tasks.yaml from the same directory as requirements.yaml and validate that every entry contains id, requirementId, title, status, createdAt, and updatedAt fields. Status MUST be open, in_progress, or done. Assignee is optional. createdAt and updatedAt MUST be valid ISO 8601 timestamps."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-PARSE-003
+    type: FR
+    title: Report parse errors
+    description: "Service MUST report missing files with the expected path, malformed YAML with the line number, and invalid enum values with the offending value. Service MUST NOT panic on any malformed input."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-PARSE-004
+    type: FR
+    title: Detect duplicate IDs
+    description: "Parser MUST detect and report duplicate requirement IDs in requirements.yaml and duplicate task IDs in tasks.yaml. Duplicates MUST be treated as a parse error."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-SCAN-001
+    type: FR
+    title: Scan source files for @req annotations
+    description: "Scanner MUST recursively scan all files under --source and --tests paths for @req annotations supporting .rs .ts .js .go .dart using // comments and .py using # comments."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-SCAN-002
+    type: FR
+    title: Classify annotations as impl or test
+    description: "Scanner MUST classify each annotation as impl or test based on file path. Files matching test_*, *_test.*, or *.test.* patterns or located under the --tests path MUST be classified as test."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-SCAN-003
+    type: FR
+    title: Capture annotation snippet
+    description: "Scanner MUST capture 2-3 lines of code context around each @req annotation including the annotation line itself and the following line."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-SCAN-004
+    type: FR
+    title: Detect orphan annotations
+    description: "Scanner MUST detect annotations whose reqId does not match any id in requirements.yaml and report them separately from valid annotations."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-SCAN-005
+    type: FR
+    title: Detect orphan tasks
+    description: "Scanner MUST detect tasks whose requirementId does not match any id in requirements.yaml and report them separately from valid tasks."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-SCAN-006
+    type: FR
+    title: Skip unsupported files
+    description: "Scanner MUST silently skip files with extensions other than .rs, .ts, .js, .py, .dart, .go. Scanner MUST NOT attempt to read binary files or files without extensions."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-COV-001
+    type: FR
+    title: Compute per-requirement coverage status
+    description: "Service MUST compute coverage status per requirement: covered if it has at least one impl and one test annotation, partial if it has at least one impl annotation but no test annotations, missing if it has no impl annotations regardless of test annotations."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-COV-002
+    type: FR
+    title: Compute project-level coverage summary
+    description: "Service MUST compute a project-level summary containing total requirements, count and percentage of covered, partial, and missing requirements."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-COV-003
+    type: FR
+    title: Compute stats breakdown
+    description: "Service MUST compute requirement counts grouped by type (FR, AR) and by coverage status, annotation counts by type (impl, test) with orphan count, and task counts by status (open, in_progress, done) with orphan count."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-API-001
+    type: FR
+    title: GET /healthcheck
+    description: "Service MUST return status, version, and current timestamp from GET /healthcheck. Status MUST be healthy when the last scan completed successfully and degraded when the last scan failed or no scan has completed."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-API-002
+    type: FR
+    title: GET /stats
+    description: "Service MUST return aggregate requirement, annotation, and task counts with overall coverage percentage from GET /stats."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-API-003
+    type: FR
+    title: GET /requirements
+    description: "Service MUST return all requirements from GET /requirements supporting filtering by type (FR, AR) and status (covered, partial, missing) and sorting by id or updatedAt in asc or desc order."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-API-004
+    type: FR
+    title: GET /requirements/{requirementId}
+    description: "Service MUST return a single requirement with all linked annotations and tasks from GET /requirements/{requirementId}. Service MUST return 404 with error and message fields if the requirement does not exist."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-API-005
+    type: FR
+    title: GET /annotations
+    description: "Service MUST return all annotations from GET /annotations supporting filtering by type (impl, test) and by orphans=true to return only orphan annotations."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-API-006
+    type: FR
+    title: GET /tasks
+    description: "Service MUST return all tasks from GET /tasks supporting filtering by status (open, in_progress, done) and orphans=true, and sorting by id or updatedAt in asc or desc order."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-API-007
+    type: FR
+    title: POST /scan
+    description: "Service MUST trigger an async re-scan on POST /scan and return 202 immediately with status scanning. Concurrent scan requests MUST be rejected with a JSON error response containing error and message fields."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-API-008
+    type: FR
+    title: GET /scan
+    description: "Service MUST return the current scan state from GET /scan with status (idle, scanning, completed, failed), startedAt, completedAt, and duration in milliseconds."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-CLI-001
+    type: FR
+    title: scan subcommand
+    description: "Service MUST expose a scan subcommand accepting --requirements, --source, --tests, and --strict flags. With --strict the process MUST exit with code 1 if any requirement is missing or partial or any orphan annotations or tasks exist."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-CLI-002
+    type: FR
+    title: serve subcommand
+    description: "Service MUST expose a serve subcommand accepting --requirements, --source, --tests, and --port flags. Service MUST perform an initial scan on startup before accepting requests."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: FR-ERR-001
+    type: FR
+    title: Graceful error handling
+    description: "Service MUST NOT panic under any input. All API errors MUST return JSON with error and message fields. Permission errors on individual files MUST be skipped with a warning and the scan MUST continue."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: AR-CLI-001
+    type: AR
+    title: Shared project config across subcommands
+    description: "The --requirements, --source, and --tests flags MUST be defined once in a shared config struct and reused across scan and serve subcommands."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: AR-SELF-001
+    type: AR
+    title: Self-hosting
+    description: "The service MUST annotate its own source code with @req references and MUST pass sdd-coverage scan --requirements requirements.yaml --source ./src --tests ./tests --strict on its own codebase."
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
