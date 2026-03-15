@@ -14,7 +14,7 @@ fn req_regex() -> &'static Regex {
     REQ_PATTERN.get_or_init(|| Regex::new(r"(?://+|#)\s*@req\s+([\w-]+)").unwrap())
 }
 
-// @req FR-SCAN-001
+// @req FR-SCAN-006
 fn is_supported_extension(path: &Path) -> bool {
     matches!(
         path.extension().and_then(|e| e.to_str()),
