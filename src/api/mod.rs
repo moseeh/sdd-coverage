@@ -1,4 +1,5 @@
 pub mod healthcheck;
+pub mod requirements;
 pub mod stats;
 
 use std::sync::Arc;
