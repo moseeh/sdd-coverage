@@ -16,6 +16,7 @@ fn make_state(status: HealthStatus) -> SharedState {
     Arc::new(RwLock::new(AppState {
         scan_result: None,
         health_status: status,
+        last_scan_at: None,
     }))
 }
 

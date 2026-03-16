@@ -134,9 +134,9 @@ tasks:
   - id: TASK-016
     requirementId: FR-API-002
     title: "Implement GET /stats endpoint"
-    status: open
+    status: done
     createdAt: "2026-03-15T00:00:00Z"
-    updatedAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-16T14:18:41Z"
 
   - id: TASK-017
     requirementId: FR-API-003
