@@ -194,3 +194,11 @@ tasks:
     status: done
     createdAt: "2026-03-15T00:00:00Z"
     updatedAt: "2026-03-16T15:22:54Z"
+
+  # Phase 8: DRY refactor
+  - id: TASK-028
+    requirementId: AR-DRY-001
+    title: "Extract shared test helpers into common module and annotate with @req"
+    status: open
+    createdAt: "2026-03-16T15:41:21Z"
+    updatedAt: "2026-03-16T15:41:21Z"

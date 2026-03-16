@@ -187,3 +187,10 @@ requirements:
     description: "The service MUST annotate its own source code with @req references and MUST pass sdd-coverage scan --requirements requirements.yaml --source ./src --tests ./tests --strict on its own codebase."
     createdAt: "2026-03-15T00:00:00Z"
     updatedAt: "2026-03-15T00:00:00Z"
+
+  - id: AR-DRY-001
+    type: AR
+    title: Extract shared test helpers
+    description: "Shared test helper functions (make_state, make_app, make_scan_result, dummy_config, make_requirement, make_annotation, make_task, write_yaml) MUST be extracted into a common test utility module to eliminate duplication across test files. Each helper MUST have a @req annotation tracing to the requirement it supports."
+    createdAt: "2026-03-16T15:41:21Z"
+    updatedAt: "2026-03-16T15:41:21Z"
