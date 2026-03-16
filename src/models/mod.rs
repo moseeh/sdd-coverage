@@ -112,6 +112,14 @@ pub struct ScanResult {
     pub warnings: Vec<String>,
 }
 
+// @req FR-API-001
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum HealthStatus {
+    Healthy,
+    Degraded,
+}
+
 // @req FR-PARSE-001
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

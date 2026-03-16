@@ -1,3 +1,4 @@
+pub mod api;
 pub mod config;
 pub mod coverage;
 pub mod error;
