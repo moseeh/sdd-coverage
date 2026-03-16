@@ -1,15 +1,11 @@
+mod common;
+
 use std::io::Write;
 use std::path::Path;
 
 use sdd_coverage::error::ParseError;
 use sdd_coverage::parser::{parse_requirements, parse_tasks};
 use tempfile::NamedTempFile;
-
-fn write_yaml(content: &str) -> NamedTempFile {
-    let mut file = NamedTempFile::new().unwrap();
-    file.write_all(content.as_bytes()).unwrap();
-    file
-}
 
 // @req FR-PARSE-003
 #[test]
@@ -24,7 +20,7 @@ fn missing_file_reports_expected_path() {
 // @req FR-PARSE-003
 #[test]
 fn malformed_yaml_reports_line_number() {
-    let file = write_yaml(
+    let file = common::write_yaml_fixture(
         r#"
 requirements:
   - id: FR-TEST-001
@@ -50,7 +46,7 @@ requirements:
 // @req FR-PARSE-003
 #[test]
 fn invalid_enum_reports_offending_value() {
-    let file = write_yaml(
+    let file = common::write_yaml_fixture(
         r#"
 requirements:
   - id: FR-TEST-001
@@ -75,7 +71,7 @@ requirements:
 // @req FR-PARSE-003
 #[test]
 fn invalid_task_status_reports_offending_value() {
-    let file = write_yaml(
+    let file = common::write_yaml_fixture(
         r#"
 tasks:
   - id: TASK-001
@@ -117,7 +113,7 @@ fn missing_tasks_file_reports_expected_path() {
 // @req FR-PARSE-003
 #[test]
 fn no_panic_on_empty_file() {
-    let file = write_yaml("");
+    let file = common::write_yaml_fixture("");
     let result = parse_requirements(file.path());
     assert!(result.is_err());
 }
@@ -135,7 +131,7 @@ fn no_panic_on_binary_content() {
 // @req FR-PARSE-003
 #[test]
 fn malformed_yaml_error_contains_file_path() {
-    let file = write_yaml("{{{{not yaml");
+    let file = common::write_yaml_fixture("{{{{not yaml");
     let err = parse_requirements(file.path()).unwrap_err();
     let msg = err.to_string();
     assert!(

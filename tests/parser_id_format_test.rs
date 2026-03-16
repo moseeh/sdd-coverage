@@ -1,19 +1,13 @@
-use std::io::Write;
+mod common;
 
 use sdd_coverage::error::ParseError;
 use sdd_coverage::parser::{parse_requirements, parse_tasks};
-use tempfile::{NamedTempFile, TempDir};
-
-fn write_yaml(content: &str) -> NamedTempFile {
-    let mut file = NamedTempFile::new().unwrap();
-    file.write_all(content.as_bytes()).unwrap();
-    file
-}
+use tempfile::TempDir;
 
 // @req FR-PARSE-005
 #[test]
 fn accepts_valid_requirement_id_formats() {
-    let file = write_yaml(
+    let file = common::write_yaml_fixture(
         r#"
 requirements:
   - id: FR-SCAN-001
@@ -37,7 +31,7 @@ requirements:
 // @req FR-PARSE-005
 #[test]
 fn rejects_requirement_id_missing_type_prefix() {
-    let file = write_yaml(
+    let file = common::write_yaml_fixture(
         r#"
 requirements:
   - id: SCAN-001
@@ -56,7 +50,7 @@ requirements:
 // @req FR-PARSE-005
 #[test]
 fn rejects_requirement_id_lowercase_domain() {
-    let file = write_yaml(
+    let file = common::write_yaml_fixture(
         r#"
 requirements:
   - id: FR-scan-001
@@ -74,7 +68,7 @@ requirements:
 // @req FR-PARSE-005
 #[test]
 fn rejects_requirement_id_missing_number() {
-    let file = write_yaml(
+    let file = common::write_yaml_fixture(
         r#"
 requirements:
   - id: FR-SCAN
@@ -92,7 +86,7 @@ requirements:
 // @req FR-PARSE-005
 #[test]
 fn rejects_requirement_id_wrong_type() {
-    let file = write_yaml(
+    let file = common::write_yaml_fixture(
         r#"
 requirements:
   - id: XX-SCAN-001
@@ -180,7 +174,7 @@ tasks:
 // @req FR-PARSE-005
 #[test]
 fn error_message_includes_expected_format() {
-    let file = write_yaml(
+    let file = common::write_yaml_fixture(
         r#"
 requirements:
   - id: BADID

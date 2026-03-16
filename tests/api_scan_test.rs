@@ -15,6 +15,7 @@ use sdd_coverage::api::{AppState, ScanState, SharedState};
 use sdd_coverage::config::ProjectConfig;
 use sdd_coverage::models::HealthStatus;
 
+// @req FR-API-007
 fn make_state() -> SharedState {
     Arc::new(RwLock::new(AppState {
         scan_result: None,
@@ -33,6 +34,7 @@ fn make_state() -> SharedState {
     }))
 }
 
+// @req FR-API-007
 fn make_app(state: SharedState) -> Router {
     Router::new()
         .route("/scan", post(trigger_scan))

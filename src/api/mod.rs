@@ -24,6 +24,7 @@ pub enum ScanState {
 }
 
 // @req FR-API-001
+// @req AR-DRY-001
 pub struct AppState {
     pub scan_result: Option<ScanResult>,
     pub health_status: HealthStatus,

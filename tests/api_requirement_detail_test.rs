@@ -1,6 +1,6 @@
+mod common;
+
 use std::collections::HashMap;
-use std::path::PathBuf;
-use std::sync::Arc;
 
 use axum::Router;
 use axum::body::Body;
@@ -8,17 +8,16 @@ use axum::http::{Request, StatusCode};
 use axum::routing::get;
 use chrono::{TimeZone, Utc};
 use serde_json::Value;
-use tokio::sync::RwLock;
 use tower::ServiceExt;
 
+use sdd_coverage::api::SharedState;
 use sdd_coverage::api::requirements::get_requirement;
-use sdd_coverage::api::{AppState, ScanState, SharedState};
-use sdd_coverage::config::ProjectConfig;
 use sdd_coverage::models::{
     Annotation, AnnotationStats, AnnotationType, HealthStatus, Requirement, RequirementStats,
     RequirementType, ScanResult, Task, TaskStats, TaskStatus,
 };
 
+// @req FR-API-004
 fn make_scan_result() -> ScanResult {
     let reqs = vec![Requirement {
         id: "FR-COV-001".to_string(),
@@ -101,24 +100,7 @@ fn make_scan_result() -> ScanResult {
     }
 }
 
-fn make_state() -> SharedState {
-    Arc::new(RwLock::new(AppState {
-        scan_result: Some(make_scan_result()),
-        health_status: HealthStatus::Healthy,
-        last_scan_at: Some(Utc::now()),
-        scan_state: ScanState::Idle,
-        scan_started_at: None,
-        scan_completed_at: None,
-        scan_duration_ms: None,
-        scan_lock: Arc::new(std::sync::atomic::AtomicBool::new(false)),
-        config: ProjectConfig {
-            requirements: PathBuf::from("r.yaml"),
-            source: PathBuf::from("src"),
-            tests: PathBuf::from("tests"),
-        },
-    }))
-}
-
+// @req FR-API-004
 fn make_app(state: SharedState) -> Router {
     Router::new()
         .route("/requirements/{id}", get(get_requirement))
@@ -128,7 +110,10 @@ fn make_app(state: SharedState) -> Router {
 // @req FR-API-004
 #[tokio::test]
 async fn returns_requirement_with_linked_artifacts() {
-    let app = make_app(make_state());
+    let app = make_app(common::make_app_state(
+        HealthStatus::Healthy,
+        Some(make_scan_result()),
+    ));
     let response = app
         .oneshot(
             Request::builder()
@@ -163,7 +148,10 @@ async fn returns_requirement_with_linked_artifacts() {
 // @req FR-API-004
 #[tokio::test]
 async fn returns_404_for_unknown_requirement() {
-    let app = make_app(make_state());
+    let app = make_app(common::make_app_state(
+        HealthStatus::Healthy,
+        Some(make_scan_result()),
+    ));
     let response = app
         .oneshot(
             Request::builder()
@@ -187,7 +175,10 @@ async fn returns_404_for_unknown_requirement() {
 // @req FR-API-004
 #[tokio::test]
 async fn only_includes_matching_annotations_and_tasks() {
-    let app = make_app(make_state());
+    let app = make_app(common::make_app_state(
+        HealthStatus::Healthy,
+        Some(make_scan_result()),
+    ));
     let response = app
         .oneshot(
             Request::builder()
@@ -214,7 +205,10 @@ async fn only_includes_matching_annotations_and_tasks() {
 // @req FR-API-004
 #[tokio::test]
 async fn annotation_includes_all_fields() {
-    let app = make_app(make_state());
+    let app = make_app(common::make_app_state(
+        HealthStatus::Healthy,
+        Some(make_scan_result()),
+    ));
     let response = app
         .oneshot(
             Request::builder()

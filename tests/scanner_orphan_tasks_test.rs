@@ -1,28 +1,17 @@
+mod common;
+
 use std::collections::HashSet;
 
-use chrono::Utc;
 use sdd_coverage::models::{Task, TaskStatus};
 use sdd_coverage::scanner::find_orphan_tasks;
-
-fn make_task(id: &str, requirement_id: &str) -> Task {
-    Task {
-        id: id.to_string(),
-        requirement_id: requirement_id.to_string(),
-        title: "Test task".to_string(),
-        status: TaskStatus::Open,
-        assignee: None,
-        created_at: Utc::now(),
-        updated_at: Utc::now(),
-    }
-}
 
 // @req FR-SCAN-005
 #[test]
 fn detects_orphan_tasks() {
     let tasks = vec![
-        make_task("TASK-001", "FR-EXISTS-001"),
-        make_task("TASK-002", "FR-ORPHAN-001"),
-        make_task("TASK-003", "FR-EXISTS-002"),
+        common::make_task("TASK-001", "FR-EXISTS-001", TaskStatus::Open),
+        common::make_task("TASK-002", "FR-ORPHAN-001", TaskStatus::Open),
+        common::make_task("TASK-003", "FR-EXISTS-002", TaskStatus::Open),
     ];
     let req_ids: HashSet<&str> = ["FR-EXISTS-001", "FR-EXISTS-002"].into();
 
@@ -35,8 +24,8 @@ fn detects_orphan_tasks() {
 #[test]
 fn no_orphans_when_all_match() {
     let tasks = vec![
-        make_task("TASK-001", "FR-EXISTS-001"),
-        make_task("TASK-002", "FR-EXISTS-002"),
+        common::make_task("TASK-001", "FR-EXISTS-001", TaskStatus::Open),
+        common::make_task("TASK-002", "FR-EXISTS-002", TaskStatus::Open),
     ];
     let req_ids: HashSet<&str> = ["FR-EXISTS-001", "FR-EXISTS-002"].into();
 
@@ -48,8 +37,8 @@ fn no_orphans_when_all_match() {
 #[test]
 fn all_orphans_when_none_match() {
     let tasks = vec![
-        make_task("TASK-001", "FR-GONE-001"),
-        make_task("TASK-002", "FR-GONE-002"),
+        common::make_task("TASK-001", "FR-GONE-001", TaskStatus::Open),
+        common::make_task("TASK-002", "FR-GONE-002", TaskStatus::Open),
     ];
     let req_ids: HashSet<&str> = ["FR-OTHER-001"].into();
 
@@ -70,7 +59,11 @@ fn empty_tasks_returns_empty() {
 // @req FR-SCAN-005
 #[test]
 fn empty_requirements_makes_all_orphans() {
-    let tasks = vec![make_task("TASK-001", "FR-ANY-001")];
+    let tasks = vec![common::make_task(
+        "TASK-001",
+        "FR-ANY-001",
+        TaskStatus::Open,
+    )];
     let req_ids: HashSet<&str> = HashSet::new();
 
     let orphans = find_orphan_tasks(&tasks, &req_ids);

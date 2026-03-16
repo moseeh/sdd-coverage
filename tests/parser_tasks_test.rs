@@ -4,6 +4,7 @@ use sdd_coverage::models::TaskStatus;
 use sdd_coverage::parser::parse_tasks;
 use tempfile::TempDir;
 
+// @req FR-PARSE-002
 fn write_tasks_fixture(content: &str) -> TempDir {
     let dir = TempDir::new().unwrap();
     let tasks_path = dir.path().join("tasks.yaml");

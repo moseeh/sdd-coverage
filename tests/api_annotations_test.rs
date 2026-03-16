@@ -1,6 +1,6 @@
+mod common;
+
 use std::collections::HashMap;
-use std::path::PathBuf;
-use std::sync::Arc;
 
 use axum::Router;
 use axum::body::Body;
@@ -8,17 +8,16 @@ use axum::http::{Request, StatusCode};
 use axum::routing::get;
 use chrono::{TimeZone, Utc};
 use serde_json::Value;
-use tokio::sync::RwLock;
 use tower::ServiceExt;
 
+use sdd_coverage::api::SharedState;
 use sdd_coverage::api::annotations::list_annotations;
-use sdd_coverage::api::{AppState, ScanState, SharedState};
-use sdd_coverage::config::ProjectConfig;
 use sdd_coverage::models::{
     Annotation, AnnotationStats, AnnotationType, HealthStatus, Requirement, RequirementStats,
     RequirementType, ScanResult, TaskStats,
 };
 
+// @req FR-API-005
 fn make_scan_result() -> ScanResult {
     let reqs = vec![Requirement {
         id: "FR-COV-001".to_string(),
@@ -80,24 +79,7 @@ fn make_scan_result() -> ScanResult {
     }
 }
 
-fn make_state() -> SharedState {
-    Arc::new(RwLock::new(AppState {
-        scan_result: Some(make_scan_result()),
-        health_status: HealthStatus::Healthy,
-        last_scan_at: Some(Utc::now()),
-        scan_state: ScanState::Idle,
-        scan_started_at: None,
-        scan_completed_at: None,
-        scan_duration_ms: None,
-        scan_lock: Arc::new(std::sync::atomic::AtomicBool::new(false)),
-        config: ProjectConfig {
-            requirements: PathBuf::from("r.yaml"),
-            source: PathBuf::from("src"),
-            tests: PathBuf::from("tests"),
-        },
-    }))
-}
-
+// @req FR-API-005
 fn make_app(state: SharedState) -> Router {
     Router::new()
         .route("/annotations", get(list_annotations))
@@ -107,7 +89,10 @@ fn make_app(state: SharedState) -> Router {
 // @req FR-API-005
 #[tokio::test]
 async fn returns_all_annotations_sorted_by_file_and_line() {
-    let app = make_app(make_state());
+    let app = make_app(common::make_app_state(
+        HealthStatus::Healthy,
+        Some(make_scan_result()),
+    ));
     let response = app
         .oneshot(
             Request::builder()
@@ -137,7 +122,10 @@ async fn returns_all_annotations_sorted_by_file_and_line() {
 // @req FR-API-005
 #[tokio::test]
 async fn filters_by_type_impl() {
-    let app = make_app(make_state());
+    let app = make_app(common::make_app_state(
+        HealthStatus::Healthy,
+        Some(make_scan_result()),
+    ));
     let response = app
         .oneshot(
             Request::builder()
@@ -159,7 +147,10 @@ async fn filters_by_type_impl() {
 // @req FR-API-005
 #[tokio::test]
 async fn filters_by_type_test() {
-    let app = make_app(make_state());
+    let app = make_app(common::make_app_state(
+        HealthStatus::Healthy,
+        Some(make_scan_result()),
+    ));
     let response = app
         .oneshot(
             Request::builder()
@@ -181,7 +172,10 @@ async fn filters_by_type_test() {
 // @req FR-API-005
 #[tokio::test]
 async fn filters_orphans_only() {
-    let app = make_app(make_state());
+    let app = make_app(common::make_app_state(
+        HealthStatus::Healthy,
+        Some(make_scan_result()),
+    ));
     let response = app
         .oneshot(
             Request::builder()
@@ -203,7 +197,10 @@ async fn filters_orphans_only() {
 // @req FR-API-005
 #[tokio::test]
 async fn combines_type_and_orphan_filters() {
-    let app = make_app(make_state());
+    let app = make_app(common::make_app_state(
+        HealthStatus::Healthy,
+        Some(make_scan_result()),
+    ));
     let response = app
         .oneshot(
             Request::builder()

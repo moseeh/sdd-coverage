@@ -1,25 +1,17 @@
+mod common;
+
 use std::collections::HashSet;
 
 use sdd_coverage::models::{Annotation, AnnotationType};
 use sdd_coverage::scanner::find_orphan_annotations;
 
-fn make_annotation(req_id: &str) -> Annotation {
-    Annotation {
-        file: "src/main.rs".to_string(),
-        line: 1,
-        req_id: req_id.to_string(),
-        annotation_type: AnnotationType::Impl,
-        snippet: "// @req ".to_string() + req_id,
-    }
-}
-
 // @req FR-SCAN-004
 #[test]
 fn detects_orphan_annotations() {
     let annotations = vec![
-        make_annotation("FR-EXISTS-001"),
-        make_annotation("FR-ORPHAN-001"),
-        make_annotation("FR-EXISTS-002"),
+        common::make_annotation("FR-EXISTS-001", AnnotationType::Impl),
+        common::make_annotation("FR-ORPHAN-001", AnnotationType::Impl),
+        common::make_annotation("FR-EXISTS-002", AnnotationType::Impl),
     ];
     let req_ids: HashSet<&str> = ["FR-EXISTS-001", "FR-EXISTS-002"].into();
 
@@ -32,8 +24,8 @@ fn detects_orphan_annotations() {
 #[test]
 fn no_orphans_when_all_match() {
     let annotations = vec![
-        make_annotation("FR-EXISTS-001"),
-        make_annotation("FR-EXISTS-002"),
+        common::make_annotation("FR-EXISTS-001", AnnotationType::Impl),
+        common::make_annotation("FR-EXISTS-002", AnnotationType::Impl),
     ];
     let req_ids: HashSet<&str> = ["FR-EXISTS-001", "FR-EXISTS-002"].into();
 
@@ -45,8 +37,8 @@ fn no_orphans_when_all_match() {
 #[test]
 fn all_orphans_when_none_match() {
     let annotations = vec![
-        make_annotation("FR-ORPHAN-001"),
-        make_annotation("FR-ORPHAN-002"),
+        common::make_annotation("FR-ORPHAN-001", AnnotationType::Impl),
+        common::make_annotation("FR-ORPHAN-002", AnnotationType::Impl),
     ];
     let req_ids: HashSet<&str> = ["FR-OTHER-001"].into();
 
@@ -67,7 +59,7 @@ fn empty_annotations_returns_empty() {
 // @req FR-SCAN-004
 #[test]
 fn empty_requirements_makes_all_orphans() {
-    let annotations = vec![make_annotation("FR-ANY-001")];
+    let annotations = vec![common::make_annotation("FR-ANY-001", AnnotationType::Impl)];
     let req_ids: HashSet<&str> = HashSet::new();
 
     let orphans = find_orphan_annotations(&annotations, &req_ids);

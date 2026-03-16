@@ -1,5 +1,6 @@
+mod common;
+
 use std::path::PathBuf;
-use std::sync::Arc;
 
 use axum::Router;
 use axum::body::Body;
@@ -7,42 +8,16 @@ use axum::http::{Request, StatusCode};
 use axum::response::IntoResponse;
 use axum::routing::get;
 use serde_json::Value;
-use tokio::sync::RwLock;
 use tower::ServiceExt;
 
-use sdd_coverage::api::{AppState, ScanState, SharedState};
-use sdd_coverage::config::ProjectConfig;
 use sdd_coverage::error::{ParseError, fallback_handler};
 use sdd_coverage::models::HealthStatus;
-
-fn dummy_config() -> ProjectConfig {
-    ProjectConfig {
-        requirements: PathBuf::from("r.yaml"),
-        source: PathBuf::from("src"),
-        tests: PathBuf::from("tests"),
-    }
-}
-
-fn make_state() -> SharedState {
-    Arc::new(RwLock::new(AppState {
-        scan_result: None,
-        health_status: HealthStatus::Degraded,
-        last_scan_at: None,
-        scan_state: ScanState::Idle,
-        scan_started_at: None,
-        scan_completed_at: None,
-        scan_duration_ms: None,
-        scan_lock: Arc::new(std::sync::atomic::AtomicBool::new(false)),
-        config: dummy_config(),
-    }))
-}
 
 // @req FR-ERR-001
 #[tokio::test]
 async fn fallback_returns_404_json() {
-    let app = Router::new()
-        .fallback(fallback_handler)
-        .with_state(make_state());
+    let state = common::make_app_state(HealthStatus::Degraded, None);
+    let app = Router::new().fallback(fallback_handler).with_state(state);
 
     let response = app
         .oneshot(

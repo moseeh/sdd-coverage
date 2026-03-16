@@ -1,4 +1,5 @@
-use std::path::PathBuf;
+mod common;
+
 use std::sync::Arc;
 
 use axum::Router;
@@ -12,17 +13,9 @@ use tower::ServiceExt;
 
 use sdd_coverage::api::scan::get_scan_status;
 use sdd_coverage::api::{AppState, ScanState, SharedState};
-use sdd_coverage::config::ProjectConfig;
 use sdd_coverage::models::HealthStatus;
 
-fn dummy_config() -> ProjectConfig {
-    ProjectConfig {
-        requirements: PathBuf::from("r.yaml"),
-        source: PathBuf::from("src"),
-        tests: PathBuf::from("tests"),
-    }
-}
-
+// @req FR-API-008
 fn make_app(state: SharedState) -> Router {
     Router::new()
         .route("/scan", get(get_scan_status))
@@ -41,7 +34,7 @@ async fn returns_idle_when_no_scan_started() {
         scan_completed_at: None,
         scan_duration_ms: None,
         scan_lock: Arc::new(std::sync::atomic::AtomicBool::new(false)),
-        config: dummy_config(),
+        config: common::make_dummy_config(),
     }));
 
     let app = make_app(state);
@@ -75,7 +68,7 @@ async fn returns_scanning_with_started_at() {
         scan_completed_at: None,
         scan_duration_ms: None,
         scan_lock: Arc::new(std::sync::atomic::AtomicBool::new(false)),
-        config: dummy_config(),
+        config: common::make_dummy_config(),
     }));
 
     let app = make_app(state);
@@ -107,7 +100,7 @@ async fn returns_completed_with_all_fields() {
         scan_completed_at: Some(completed),
         scan_duration_ms: Some(340),
         scan_lock: Arc::new(std::sync::atomic::AtomicBool::new(false)),
-        config: dummy_config(),
+        config: common::make_dummy_config(),
     }));
 
     let app = make_app(state);
@@ -140,7 +133,7 @@ async fn returns_failed_status() {
         scan_completed_at: Some(completed),
         scan_duration_ms: Some(100),
         scan_lock: Arc::new(std::sync::atomic::AtomicBool::new(false)),
-        config: dummy_config(),
+        config: common::make_dummy_config(),
     }));
 
     let app = make_app(state);

@@ -1,20 +1,13 @@
-use std::io::Write;
+mod common;
 
 use sdd_coverage::error::ParseError;
 use sdd_coverage::parser::{parse_requirements, parse_tasks};
-use tempfile::NamedTempFile;
 use tempfile::TempDir;
-
-fn write_yaml(content: &str) -> NamedTempFile {
-    let mut file = NamedTempFile::new().unwrap();
-    file.write_all(content.as_bytes()).unwrap();
-    file
-}
 
 // @req FR-PARSE-004
 #[test]
 fn rejects_duplicate_requirement_ids() {
-    let file = write_yaml(
+    let file = common::write_yaml_fixture(
         r#"
 requirements:
   - id: FR-DUP-001
@@ -74,7 +67,7 @@ tasks:
 // @req FR-PARSE-004
 #[test]
 fn accepts_unique_requirement_ids() {
-    let file = write_yaml(
+    let file = common::write_yaml_fixture(
         r#"
 requirements:
   - id: FR-UNQ-001
@@ -130,7 +123,7 @@ tasks:
 // @req FR-PARSE-004
 #[test]
 fn duplicate_error_includes_file_path() {
-    let file = write_yaml(
+    let file = common::write_yaml_fixture(
         r#"
 requirements:
   - id: FR-DUP-002

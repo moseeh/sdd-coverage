@@ -1,6 +1,6 @@
+mod common;
+
 use std::collections::HashMap;
-use std::path::PathBuf;
-use std::sync::Arc;
 
 use axum::Router;
 use axum::body::Body;
@@ -8,17 +8,16 @@ use axum::http::{Request, StatusCode};
 use axum::routing::get;
 use chrono::{TimeZone, Utc};
 use serde_json::Value;
-use tokio::sync::RwLock;
 use tower::ServiceExt;
 
+use sdd_coverage::api::SharedState;
 use sdd_coverage::api::requirements::list_requirements;
-use sdd_coverage::api::{AppState, ScanState, SharedState};
-use sdd_coverage::config::ProjectConfig;
 use sdd_coverage::models::{
     Annotation, AnnotationStats, AnnotationType, HealthStatus, Requirement, RequirementStats,
     RequirementType, ScanResult, TaskStats,
 };
 
+// @req FR-API-003
 fn make_scan_result() -> ScanResult {
     let reqs = vec![
         Requirement {
@@ -47,9 +46,6 @@ fn make_scan_result() -> ScanResult {
         },
     ];
 
-    // FR-COV-001: impl + test => covered
-    // AR-CLI-001: impl only => partial
-    // FR-COV-002: nothing => missing
     let annotations = vec![
         Annotation {
             file: "src/main.rs".to_string(),
@@ -101,24 +97,7 @@ fn make_scan_result() -> ScanResult {
     }
 }
 
-fn make_state() -> SharedState {
-    Arc::new(RwLock::new(AppState {
-        scan_result: Some(make_scan_result()),
-        health_status: HealthStatus::Healthy,
-        last_scan_at: Some(Utc::now()),
-        scan_state: ScanState::Idle,
-        scan_started_at: None,
-        scan_completed_at: None,
-        scan_duration_ms: None,
-        scan_lock: Arc::new(std::sync::atomic::AtomicBool::new(false)),
-        config: ProjectConfig {
-            requirements: PathBuf::from("r.yaml"),
-            source: PathBuf::from("src"),
-            tests: PathBuf::from("tests"),
-        },
-    }))
-}
-
+// @req FR-API-003
 fn make_app(state: SharedState) -> Router {
     Router::new()
         .route("/requirements", get(list_requirements))
@@ -128,7 +107,8 @@ fn make_app(state: SharedState) -> Router {
 // @req FR-API-003
 #[tokio::test]
 async fn returns_all_requirements_with_status() {
-    let app = make_app(make_state());
+    let state = common::make_app_state(HealthStatus::Healthy, Some(make_scan_result()));
+    let app = make_app(state);
     let response = app
         .oneshot(
             Request::builder()
@@ -147,12 +127,10 @@ async fn returns_all_requirements_with_status() {
     let json: Vec<Value> = serde_json::from_slice(&body).unwrap();
     assert_eq!(json.len(), 3);
 
-    // Default sort by id asc
     assert_eq!(json[0]["id"], "AR-CLI-001");
     assert_eq!(json[1]["id"], "FR-COV-001");
     assert_eq!(json[2]["id"], "FR-COV-002");
 
-    // Check status fields
     assert_eq!(json[0]["status"], "partial");
     assert_eq!(json[1]["status"], "covered");
     assert_eq!(json[2]["status"], "missing");
@@ -161,7 +139,8 @@ async fn returns_all_requirements_with_status() {
 // @req FR-API-003
 #[tokio::test]
 async fn filters_by_type() {
-    let app = make_app(make_state());
+    let state = common::make_app_state(HealthStatus::Healthy, Some(make_scan_result()));
+    let app = make_app(state);
     let response = app
         .oneshot(
             Request::builder()
@@ -183,7 +162,8 @@ async fn filters_by_type() {
 // @req FR-API-003
 #[tokio::test]
 async fn filters_by_coverage_status() {
-    let app = make_app(make_state());
+    let state = common::make_app_state(HealthStatus::Healthy, Some(make_scan_result()));
+    let app = make_app(state);
     let response = app
         .oneshot(
             Request::builder()
@@ -205,7 +185,8 @@ async fn filters_by_coverage_status() {
 // @req FR-API-003
 #[tokio::test]
 async fn sorts_by_updated_at_desc() {
-    let app = make_app(make_state());
+    let state = common::make_app_state(HealthStatus::Healthy, Some(make_scan_result()));
+    let app = make_app(state);
     let response = app
         .oneshot(
             Request::builder()
@@ -221,7 +202,6 @@ async fn sorts_by_updated_at_desc() {
         .unwrap();
     let json: Vec<Value> = serde_json::from_slice(&body).unwrap();
     assert_eq!(json.len(), 3);
-    // FR-COV-002 updatedAt=2026-03-17, FR-COV-001=2026-03-16, AR-CLI-001=2026-03-15
     assert_eq!(json[0]["id"], "FR-COV-002");
     assert_eq!(json[1]["id"], "FR-COV-001");
     assert_eq!(json[2]["id"], "AR-CLI-001");
@@ -230,7 +210,8 @@ async fn sorts_by_updated_at_desc() {
 // @req FR-API-003
 #[tokio::test]
 async fn sorts_by_id_desc() {
-    let app = make_app(make_state());
+    let state = common::make_app_state(HealthStatus::Healthy, Some(make_scan_result()));
+    let app = make_app(state);
     let response = app
         .oneshot(
             Request::builder()
@@ -253,7 +234,8 @@ async fn sorts_by_id_desc() {
 // @req FR-API-003
 #[tokio::test]
 async fn filters_type_and_status_combined() {
-    let app = make_app(make_state());
+    let state = common::make_app_state(HealthStatus::Healthy, Some(make_scan_result()));
+    let app = make_app(state);
     let response = app
         .oneshot(
             Request::builder()
@@ -275,21 +257,7 @@ async fn filters_type_and_status_combined() {
 // @req FR-API-003
 #[tokio::test]
 async fn returns_503_when_no_scan_data() {
-    let state: SharedState = Arc::new(RwLock::new(AppState {
-        scan_result: None,
-        health_status: HealthStatus::Degraded,
-        last_scan_at: None,
-        scan_state: ScanState::Idle,
-        scan_started_at: None,
-        scan_completed_at: None,
-        scan_duration_ms: None,
-        scan_lock: Arc::new(std::sync::atomic::AtomicBool::new(false)),
-        config: ProjectConfig {
-            requirements: PathBuf::from("r.yaml"),
-            source: PathBuf::from("src"),
-            tests: PathBuf::from("tests"),
-        },
-    }));
+    let state = common::make_app_state(HealthStatus::Degraded, None);
     let app = make_app(state);
     let response = app
         .oneshot(

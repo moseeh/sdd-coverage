@@ -1,15 +1,9 @@
-use std::io::Write;
+mod common;
+
 use std::path::Path;
 
 use sdd_coverage::models::RequirementType;
 use sdd_coverage::parser::parse_requirements;
-use tempfile::NamedTempFile;
-
-fn write_yaml(content: &str) -> NamedTempFile {
-    let mut file = NamedTempFile::new().unwrap();
-    file.write_all(content.as_bytes()).unwrap();
-    file
-}
 
 // @req FR-PARSE-001
 #[test]
@@ -46,7 +40,7 @@ fn parse_empty_requirements_list() {
 // @req FR-PARSE-001
 #[test]
 fn parse_rejects_missing_field() {
-    let file = write_yaml(
+    let file = common::write_yaml_fixture(
         r#"
 requirements:
   - id: FR-TEST-001
@@ -62,7 +56,7 @@ requirements:
 // @req FR-PARSE-001
 #[test]
 fn parse_rejects_invalid_type() {
-    let file = write_yaml(
+    let file = common::write_yaml_fixture(
         r#"
 requirements:
   - id: FR-TEST-001
@@ -81,7 +75,7 @@ requirements:
 // @req FR-PARSE-001
 #[test]
 fn parse_rejects_invalid_timestamp() {
-    let file = write_yaml(
+    let file = common::write_yaml_fixture(
         r#"
 requirements:
   - id: FR-TEST-001
@@ -107,7 +101,7 @@ fn parse_rejects_missing_file() {
 // @req FR-PARSE-001
 #[test]
 fn parse_rejects_malformed_yaml() {
-    let file = write_yaml("not: [valid: yaml: at: all");
+    let file = common::write_yaml_fixture("not: [valid: yaml: at: all");
 
     let result = parse_requirements(file.path());
     assert!(result.is_err());
