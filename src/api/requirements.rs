@@ -1,5 +1,5 @@
 use axum::Json;
-use axum::extract::{Query, State};
+use axum::extract::{Path, Query, State};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use serde::Deserialize;
@@ -89,4 +89,80 @@ pub async fn list_requirements(
     });
 
     (StatusCode::OK, Json(json!(items)))
+}
+
+// @req FR-API-004
+pub async fn get_requirement(
+    State(state): State<SharedState>,
+    Path(id): Path<String>,
+) -> impl IntoResponse {
+    let state = state.read().await;
+
+    let Some(ref result) = state.scan_result else {
+        return (
+            StatusCode::SERVICE_UNAVAILABLE,
+            Json(json!({
+                "error": "no_scan_data",
+                "message": "No scan has been completed yet"
+            })),
+        );
+    };
+
+    let Some(req) = result.requirements.iter().find(|r| r.id == id) else {
+        return (
+            StatusCode::NOT_FOUND,
+            Json(json!({
+                "error": "not_found",
+                "message": format!("Requirement '{}' not found", id)
+            })),
+        );
+    };
+
+    let status = compute_coverage_status(req, &result.annotations);
+
+    let annotations: Vec<serde_json::Value> = result
+        .annotations
+        .iter()
+        .filter(|a| a.req_id == id)
+        .map(|a| {
+            json!({
+                "file": a.file,
+                "line": a.line,
+                "reqId": a.req_id,
+                "type": a.annotation_type,
+                "snippet": a.snippet
+            })
+        })
+        .collect();
+
+    let tasks: Vec<serde_json::Value> = result
+        .tasks
+        .iter()
+        .filter(|t| t.requirement_id == id)
+        .map(|t| {
+            json!({
+                "id": t.id,
+                "requirementId": t.requirement_id,
+                "title": t.title,
+                "status": t.status,
+                "createdAt": t.created_at.to_rfc3339(),
+                "updatedAt": t.updated_at.to_rfc3339()
+            })
+        })
+        .collect();
+
+    (
+        StatusCode::OK,
+        Json(json!({
+            "id": req.id,
+            "type": req.req_type,
+            "title": req.title,
+            "description": req.description,
+            "status": status,
+            "createdAt": req.created_at.to_rfc3339(),
+            "updatedAt": req.updated_at.to_rfc3339(),
+            "annotations": annotations,
+            "tasks": tasks
+        })),
+    )
 }

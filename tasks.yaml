@@ -148,9 +148,9 @@ tasks:
   - id: TASK-018
     requirementId: FR-API-004
     title: "Implement GET /requirements/{id} with linked artifacts"
-    status: open
+    status: done
     createdAt: "2026-03-15T00:00:00Z"
-    updatedAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-16T14:25:54Z"
 
   - id: TASK-019
     requirementId: FR-API-005
