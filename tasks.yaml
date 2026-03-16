@@ -155,9 +155,9 @@ tasks:
   - id: TASK-019
     requirementId: FR-API-005
     title: "Implement GET /annotations with type and orphan filtering"
-    status: open
+    status: done
     createdAt: "2026-03-15T00:00:00Z"
-    updatedAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-16T14:28:45Z"
 
   - id: TASK-020
     requirementId: FR-API-006

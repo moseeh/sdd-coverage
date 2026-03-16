@@ -1,3 +1,4 @@
+pub mod annotations;
 pub mod healthcheck;
 pub mod requirements;
 pub mod stats;
