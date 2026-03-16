@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
@@ -68,6 +70,46 @@ pub struct CoverageSummary {
     pub partial: usize,
     pub missing: usize,
     pub coverage_percentage: f64,
+}
+
+// @req FR-COV-003
+#[derive(Debug, Clone, PartialEq)]
+pub struct RequirementStats {
+    pub total: usize,
+    pub by_type: HashMap<String, usize>,
+    pub by_status: HashMap<String, usize>,
+}
+
+// @req FR-COV-003
+#[derive(Debug, Clone, PartialEq)]
+pub struct AnnotationStats {
+    pub total: usize,
+    pub impl_count: usize,
+    pub test_count: usize,
+    pub orphans: usize,
+}
+
+// @req FR-COV-003
+#[derive(Debug, Clone, PartialEq)]
+pub struct TaskStats {
+    pub total: usize,
+    pub by_status: HashMap<String, usize>,
+    pub orphans: usize,
+}
+
+// @req FR-COV-003
+#[derive(Debug, Clone, PartialEq)]
+pub struct ScanResult {
+    pub requirements: Vec<Requirement>,
+    pub tasks: Vec<Task>,
+    pub annotations: Vec<Annotation>,
+    pub orphan_annotations: Vec<Annotation>,
+    pub orphan_tasks: Vec<Task>,
+    pub requirement_stats: RequirementStats,
+    pub annotation_stats: AnnotationStats,
+    pub task_stats: TaskStats,
+    pub coverage_percentage: f64,
+    pub warnings: Vec<String>,
 }
 
 // @req FR-PARSE-001

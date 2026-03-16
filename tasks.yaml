@@ -104,9 +104,9 @@ tasks:
   - id: TASK-012
     requirementId: FR-COV-003
     title: "Implement stats breakdown and run_scan orchestrator"
-    status: open
+    status: done
     createdAt: "2026-03-15T00:00:00Z"
-    updatedAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-16T14:08:35Z"
 
   # Phase 5: CLI
   - id: TASK-013

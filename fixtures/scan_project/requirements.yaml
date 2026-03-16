@@ -1,0 +1,19 @@
+requirements:
+  - id: FR-TEST-001
+    type: FR
+    title: Test feature one
+    description: First test requirement
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+  - id: FR-TEST-002
+    type: FR
+    title: Test feature two
+    description: Second test requirement
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
+  - id: AR-TEST-001
+    type: AR
+    title: Architectural requirement
+    description: No annotations for this one
+    createdAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-15T00:00:00Z"
