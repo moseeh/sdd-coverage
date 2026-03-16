@@ -90,9 +90,9 @@ tasks:
   - id: TASK-010
     requirementId: FR-COV-001
     title: "Implement per-requirement coverage status computation"
-    status: open
+    status: done
     createdAt: "2026-03-15T00:00:00Z"
-    updatedAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-16T13:57:27Z"
 
   - id: TASK-011
     requirementId: FR-COV-002

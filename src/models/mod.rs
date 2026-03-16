@@ -51,6 +51,15 @@ pub struct Annotation {
     pub snippet: String,
 }
 
+// @req FR-COV-001
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum CoverageStatus {
+    Covered,
+    Partial,
+    Missing,
+}
+
 // @req FR-PARSE-001
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
