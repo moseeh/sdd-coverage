@@ -12,6 +12,34 @@ use crate::models::HealthStatus;
 
 use super::{ScanLock, ScanState, SharedState};
 
+// @req FR-API-008
+pub async fn get_scan_status(State(state): State<SharedState>) -> impl IntoResponse {
+    let state = state.read().await;
+
+    let status = match state.scan_state {
+        ScanState::Idle => "idle",
+        ScanState::Scanning => "scanning",
+        ScanState::Completed => "completed",
+        ScanState::Failed => "failed",
+    };
+
+    let mut response = json!({ "status": status });
+
+    if let Some(started_at) = state.scan_started_at {
+        response["startedAt"] = json!(started_at.to_rfc3339());
+    }
+
+    if let Some(completed_at) = state.scan_completed_at {
+        response["completedAt"] = json!(completed_at.to_rfc3339());
+    }
+
+    if let Some(duration_ms) = state.scan_duration_ms {
+        response["duration"] = json!(duration_ms);
+    }
+
+    (StatusCode::OK, Json(response))
+}
+
 // @req FR-API-007
 pub async fn trigger_scan(
     State((state, lock)): State<(SharedState, ScanLock)>,
