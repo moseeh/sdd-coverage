@@ -162,9 +162,9 @@ tasks:
   - id: TASK-020
     requirementId: FR-API-006
     title: "Implement GET /tasks with status, orphan filtering, and sorting"
-    status: open
+    status: done
     createdAt: "2026-03-15T00:00:00Z"
-    updatedAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-16T14:31:37Z"
 
   - id: TASK-021
     requirementId: FR-API-007

@@ -2,6 +2,7 @@ pub mod annotations;
 pub mod healthcheck;
 pub mod requirements;
 pub mod stats;
+pub mod tasks;
 
 use std::sync::Arc;
 
