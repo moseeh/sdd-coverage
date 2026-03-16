@@ -51,7 +51,7 @@ fn test_prefix_pattern_classified_as_test() {
     // test_* pattern in source dir
     std::fs::write(
         source.join("test_helper.rs"),
-        "// @req FR-TEST-001\nfn test_helper() {}\n",
+        concat!("// @", "req FR-TEST-001\nfn test_helper() {}\n"),
     )
     .unwrap();
 
@@ -72,7 +72,7 @@ fn test_suffix_pattern_classified_as_test() {
     // *_test.* pattern in source dir
     std::fs::write(
         source.join("parser_test.rs"),
-        "// @req FR-TEST-001\nfn parser_test() {}\n",
+        concat!("// @", "req FR-TEST-001\nfn parser_test() {}\n"),
     )
     .unwrap();
 
@@ -93,7 +93,7 @@ fn dot_test_pattern_classified_as_test() {
     // *.test.* pattern in source dir
     std::fs::write(
         source.join("app.test.ts"),
-        "// @req FR-TEST-001\nfunction test() {}\n",
+        concat!("// @", "req FR-TEST-001\nfunction test() {}\n"),
     )
     .unwrap();
 
@@ -113,7 +113,7 @@ fn regular_source_file_classified_as_impl() {
 
     std::fs::write(
         source.join("main.rs"),
-        "// @req FR-TEST-001\nfn main() {}\n",
+        concat!("// @", "req FR-TEST-001\nfn main() {}\n"),
     )
     .unwrap();
 

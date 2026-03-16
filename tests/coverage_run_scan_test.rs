@@ -62,3 +62,20 @@ fn run_scan_detects_orphan_annotations() {
     );
     assert_eq!(result.orphan_tasks.len(), 0);
 }
+
+// @req AR-SELF-001
+#[test]
+fn self_scan_finds_all_requirement_annotations() {
+    let config = ProjectConfig {
+        requirements: PathBuf::from("requirements.yaml"),
+        source: PathBuf::from("src"),
+        tests: PathBuf::from("tests"),
+    };
+    let result = run_scan(&config).unwrap();
+
+    assert!(result.annotation_stats.impl_count > 0);
+    assert!(result.annotation_stats.test_count > 0);
+    assert_eq!(result.annotation_stats.orphans, 0);
+    assert_eq!(result.task_stats.orphans, 0);
+    assert!(result.coverage_percentage > 0.0);
+}

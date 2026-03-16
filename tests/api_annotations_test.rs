@@ -42,7 +42,7 @@ fn make_scan_result() -> ScanResult {
             line: 20,
             req_id: "FR-ORPHAN-001".to_string(),
             annotation_type: AnnotationType::Impl,
-            snippet: "// @req FR-ORPHAN-001".to_string(),
+            snippet: concat!("// @", "req FR-ORPHAN-001").to_string(),
         },
         Annotation {
             file: "tests/test.rs".to_string(),

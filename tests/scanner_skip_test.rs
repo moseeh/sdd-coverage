@@ -10,8 +10,12 @@ fn skips_unsupported_extensions() {
     std::fs::create_dir_all(&tests).unwrap();
 
     std::fs::write(source.join("data.json"), r#"{"@req": "FR-TEST-001"}"#).unwrap();
-    std::fs::write(source.join("style.css"), "/* @req FR-TEST-001 */").unwrap();
-    std::fs::write(source.join("readme.md"), "// @req FR-TEST-001").unwrap();
+    std::fs::write(
+        source.join("style.css"),
+        concat!("/* @", "req FR-TEST-001 */"),
+    )
+    .unwrap();
+    std::fs::write(source.join("readme.md"), concat!("// @", "req FR-TEST-001")).unwrap();
 
     let (annotations, _) = scan_files(&source, &tests, dir.path());
     assert!(annotations.is_empty());
@@ -26,8 +30,8 @@ fn skips_files_without_extensions() {
     std::fs::create_dir_all(&source).unwrap();
     std::fs::create_dir_all(&tests).unwrap();
 
-    std::fs::write(source.join("Makefile"), "# @req FR-TEST-001").unwrap();
-    std::fs::write(source.join("Dockerfile"), "# @req FR-TEST-001").unwrap();
+    std::fs::write(source.join("Makefile"), concat!("# @", "req FR-TEST-001")).unwrap();
+    std::fs::write(source.join("Dockerfile"), concat!("# @", "req FR-TEST-001")).unwrap();
 
     let (annotations, _) = scan_files(&source, &tests, dir.path());
     assert!(annotations.is_empty());
@@ -59,12 +63,28 @@ fn scans_only_supported_extensions() {
     std::fs::create_dir_all(&tests).unwrap();
 
     // Supported
-    std::fs::write(source.join("main.rs"), "// @req FR-TEST-001\nfn main() {}").unwrap();
-    std::fs::write(source.join("app.ts"), "// @req FR-TEST-002\nconst x = 1;").unwrap();
-    std::fs::write(source.join("lib.py"), "# @req FR-TEST-003\ndef f(): pass").unwrap();
+    std::fs::write(
+        source.join("main.rs"),
+        concat!("// @", "req FR-TEST-001\nfn main() {}"),
+    )
+    .unwrap();
+    std::fs::write(
+        source.join("app.ts"),
+        concat!("// @", "req FR-TEST-002\nconst x = 1;"),
+    )
+    .unwrap();
+    std::fs::write(
+        source.join("lib.py"),
+        concat!("# @", "req FR-TEST-003\ndef f(): pass"),
+    )
+    .unwrap();
     // Unsupported
-    std::fs::write(source.join("config.yaml"), "# @req FR-TEST-004").unwrap();
-    std::fs::write(source.join("notes.txt"), "// @req FR-TEST-005").unwrap();
+    std::fs::write(
+        source.join("config.yaml"),
+        concat!("# @", "req FR-TEST-004"),
+    )
+    .unwrap();
+    std::fs::write(source.join("notes.txt"), concat!("// @", "req FR-TEST-005")).unwrap();
 
     let (annotations, _) = scan_files(&source, &tests, dir.path());
     assert_eq!(annotations.len(), 3);

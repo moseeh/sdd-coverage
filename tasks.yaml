@@ -191,6 +191,6 @@ tasks:
   - id: TASK-024
     requirementId: AR-SELF-001
     title: "Add @req annotations to all functions and verify self-scan passes --strict"
-    status: open
+    status: done
     createdAt: "2026-03-15T00:00:00Z"
-    updatedAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-16T15:22:54Z"

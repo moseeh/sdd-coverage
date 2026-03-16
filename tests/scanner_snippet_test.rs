@@ -14,7 +14,10 @@ fn snippet_includes_annotation_and_next_line() {
         .iter()
         .filter(|a| a.file == "src/main.rs")
         .collect();
-    assert_eq!(main_rs[0].snippet, "// @req FR-TEST-001\nfn main() {");
+    assert_eq!(
+        main_rs[0].snippet,
+        concat!("// @", "req FR-TEST-001\nfn main() {")
+    );
 }
 
 // @req FR-SCAN-003
@@ -26,11 +29,11 @@ fn snippet_at_last_line_contains_only_annotation() {
     std::fs::create_dir_all(&source).unwrap();
     std::fs::create_dir_all(&tests).unwrap();
 
-    std::fs::write(source.join("end.rs"), "// @req FR-TEST-001").unwrap();
+    std::fs::write(source.join("end.rs"), concat!("// @", "req FR-TEST-001")).unwrap();
 
     let (annotations, _) = scan_files(&source, &tests, dir.path());
     assert_eq!(annotations.len(), 1);
-    assert_eq!(annotations[0].snippet, "// @req FR-TEST-001");
+    assert_eq!(annotations[0].snippet, concat!("// @", "req FR-TEST-001"));
 }
 
 // @req FR-SCAN-003
@@ -46,7 +49,7 @@ fn snippet_captures_python_context() {
         .filter(|a| a.file.ends_with(".py"))
         .collect();
     assert_eq!(py.len(), 1);
-    assert!(py[0].snippet.contains("# @req FR-TEST-003"));
+    assert!(py[0].snippet.contains(concat!("# @", "req FR-TEST-003")));
     assert!(py[0].snippet.contains("def compute():"));
 }
 
@@ -62,13 +65,13 @@ fn permission_error_produces_warning_and_continues() {
     // Create a readable file
     std::fs::write(
         source.join("good.rs"),
-        "// @req FR-TEST-001\nfn good() {}\n",
+        concat!("// @", "req FR-TEST-001\nfn good() {}\n"),
     )
     .unwrap();
 
     // Create an unreadable file
     let bad_path = source.join("bad.rs");
-    std::fs::write(&bad_path, "// @req FR-TEST-002\nfn bad() {}\n").unwrap();
+    std::fs::write(&bad_path, concat!("// @", "req FR-TEST-002\nfn bad() {}\n")).unwrap();
     #[cfg(unix)]
     {
         use std::os::unix::fs::PermissionsExt;
