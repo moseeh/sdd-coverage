@@ -169,9 +169,9 @@ tasks:
   - id: TASK-021
     requirementId: FR-API-007
     title: "Implement POST /scan with async execution and concurrent rejection"
-    status: open
+    status: done
     createdAt: "2026-03-15T00:00:00Z"
-    updatedAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-16T14:43:46Z"
 
   - id: TASK-022
     requirementId: FR-API-008

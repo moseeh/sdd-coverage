@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::path::PathBuf;
 use std::sync::Arc;
 
 use axum::Router;
@@ -11,7 +12,8 @@ use tokio::sync::RwLock;
 use tower::ServiceExt;
 
 use sdd_coverage::api::annotations::list_annotations;
-use sdd_coverage::api::{AppState, SharedState};
+use sdd_coverage::api::{AppState, ScanState, SharedState};
+use sdd_coverage::config::ProjectConfig;
 use sdd_coverage::models::{
     Annotation, AnnotationStats, AnnotationType, HealthStatus, Requirement, RequirementStats,
     RequirementType, ScanResult, TaskStats,
@@ -83,6 +85,15 @@ fn make_state() -> SharedState {
         scan_result: Some(make_scan_result()),
         health_status: HealthStatus::Healthy,
         last_scan_at: Some(Utc::now()),
+        scan_state: ScanState::Idle,
+        scan_started_at: None,
+        scan_completed_at: None,
+        scan_duration_ms: None,
+        config: ProjectConfig {
+            requirements: PathBuf::from("r.yaml"),
+            source: PathBuf::from("src"),
+            tests: PathBuf::from("tests"),
+        },
     }))
 }
 

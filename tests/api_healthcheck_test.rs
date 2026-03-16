@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use std::sync::Arc;
 
 use axum::Router;
@@ -9,7 +10,8 @@ use tokio::sync::RwLock;
 use tower::ServiceExt;
 
 use sdd_coverage::api::healthcheck::healthcheck;
-use sdd_coverage::api::{AppState, SharedState};
+use sdd_coverage::api::{AppState, ScanState, SharedState};
+use sdd_coverage::config::ProjectConfig;
 use sdd_coverage::models::HealthStatus;
 
 fn make_state(status: HealthStatus) -> SharedState {
@@ -17,6 +19,15 @@ fn make_state(status: HealthStatus) -> SharedState {
         scan_result: None,
         health_status: status,
         last_scan_at: None,
+        scan_state: ScanState::Idle,
+        scan_started_at: None,
+        scan_completed_at: None,
+        scan_duration_ms: None,
+        config: ProjectConfig {
+            requirements: PathBuf::from("r.yaml"),
+            source: PathBuf::from("src"),
+            tests: PathBuf::from("tests"),
+        },
     }))
 }
 
