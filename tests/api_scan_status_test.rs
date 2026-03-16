@@ -40,6 +40,7 @@ async fn returns_idle_when_no_scan_started() {
         scan_started_at: None,
         scan_completed_at: None,
         scan_duration_ms: None,
+        scan_lock: Arc::new(std::sync::atomic::AtomicBool::new(false)),
         config: dummy_config(),
     }));
 
@@ -73,6 +74,7 @@ async fn returns_scanning_with_started_at() {
         scan_started_at: Some(started),
         scan_completed_at: None,
         scan_duration_ms: None,
+        scan_lock: Arc::new(std::sync::atomic::AtomicBool::new(false)),
         config: dummy_config(),
     }));
 
@@ -104,6 +106,7 @@ async fn returns_completed_with_all_fields() {
         scan_started_at: Some(started),
         scan_completed_at: Some(completed),
         scan_duration_ms: Some(340),
+        scan_lock: Arc::new(std::sync::atomic::AtomicBool::new(false)),
         config: dummy_config(),
     }));
 
@@ -136,6 +139,7 @@ async fn returns_failed_status() {
         scan_started_at: Some(started),
         scan_completed_at: Some(completed),
         scan_duration_ms: Some(100),
+        scan_lock: Arc::new(std::sync::atomic::AtomicBool::new(false)),
         config: dummy_config(),
     }));
 

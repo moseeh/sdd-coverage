@@ -10,7 +10,7 @@ use serde_json::json;
 use crate::coverage::run_scan;
 use crate::models::HealthStatus;
 
-use super::{ScanLock, ScanState, SharedState};
+use super::{ScanState, SharedState};
 
 // @req FR-API-008
 pub async fn get_scan_status(State(state): State<SharedState>) -> impl IntoResponse {
@@ -41,9 +41,12 @@ pub async fn get_scan_status(State(state): State<SharedState>) -> impl IntoRespo
 }
 
 // @req FR-API-007
-pub async fn trigger_scan(
-    State((state, lock)): State<(SharedState, ScanLock)>,
-) -> impl IntoResponse {
+pub async fn trigger_scan(State(state): State<SharedState>) -> impl IntoResponse {
+    let lock = {
+        let state = state.read().await;
+        state.scan_lock.clone()
+    };
+
     if lock
         .compare_exchange(false, true, Ordering::SeqCst, Ordering::SeqCst)
         .is_err()
@@ -73,7 +76,6 @@ pub async fn trigger_scan(
     };
 
     let state_clone = state.clone();
-    let lock_clone = lock.clone();
 
     tokio::spawn(async move {
         let result = tokio::task::spawn_blocking(move || run_scan(&config)).await;
@@ -97,7 +99,7 @@ pub async fn trigger_scan(
         state.scan_duration_ms = Some(duration_ms);
         state.last_scan_at = Some(completed_at);
 
-        lock_clone.store(false, Ordering::SeqCst);
+        state.scan_lock.store(false, Ordering::SeqCst);
     });
 
     (

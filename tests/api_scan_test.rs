@@ -11,12 +11,12 @@ use tokio::sync::RwLock;
 use tower::ServiceExt;
 
 use sdd_coverage::api::scan::trigger_scan;
-use sdd_coverage::api::{AppState, ScanLock, ScanState, SharedState};
+use sdd_coverage::api::{AppState, ScanState, SharedState};
 use sdd_coverage::config::ProjectConfig;
 use sdd_coverage::models::HealthStatus;
 
-fn make_state() -> (SharedState, ScanLock) {
-    let state = Arc::new(RwLock::new(AppState {
+fn make_state() -> SharedState {
+    Arc::new(RwLock::new(AppState {
         scan_result: None,
         health_status: HealthStatus::Degraded,
         last_scan_at: None,
@@ -24,27 +24,26 @@ fn make_state() -> (SharedState, ScanLock) {
         scan_started_at: None,
         scan_completed_at: None,
         scan_duration_ms: None,
+        scan_lock: Arc::new(AtomicBool::new(false)),
         config: ProjectConfig {
             requirements: PathBuf::from("fixtures/scan_project/requirements.yaml"),
             source: PathBuf::from("fixtures/scan_project/src"),
             tests: PathBuf::from("fixtures/scan_project/tests"),
         },
-    }));
-    let lock = Arc::new(AtomicBool::new(false));
-    (state, lock)
+    }))
 }
 
-fn make_app(state: SharedState, lock: ScanLock) -> Router {
+fn make_app(state: SharedState) -> Router {
     Router::new()
         .route("/scan", post(trigger_scan))
-        .with_state((state, lock))
+        .with_state(state)
 }
 
 // @req FR-API-007
 #[tokio::test]
 async fn returns_202_with_scanning_status() {
-    let (state, lock) = make_state();
-    let app = make_app(state, lock);
+    let state = make_state();
+    let app = make_app(state);
     let response = app
         .oneshot(
             Request::builder()
@@ -69,11 +68,14 @@ async fn returns_202_with_scanning_status() {
 // @req FR-API-007
 #[tokio::test]
 async fn rejects_concurrent_scan_with_409() {
-    let (state, lock) = make_state();
+    let state = make_state();
     // Simulate a scan already in progress
-    lock.store(true, std::sync::atomic::Ordering::SeqCst);
+    {
+        let s = state.read().await;
+        s.scan_lock.store(true, std::sync::atomic::Ordering::SeqCst);
+    }
 
-    let app = make_app(state, lock);
+    let app = make_app(state);
     let response = app
         .oneshot(
             Request::builder()
@@ -98,8 +100,8 @@ async fn rejects_concurrent_scan_with_409() {
 // @req FR-API-007
 #[tokio::test]
 async fn scan_completes_and_updates_state() {
-    let (state, lock) = make_state();
-    let app = make_app(state.clone(), lock.clone());
+    let state = make_state();
+    let app = make_app(state.clone());
 
     let response = app
         .oneshot(
@@ -128,8 +130,8 @@ async fn scan_completes_and_updates_state() {
 // @req FR-API-007
 #[tokio::test]
 async fn scan_releases_lock_after_completion() {
-    let (state, lock) = make_state();
-    let app = make_app(state, lock.clone());
+    let state = make_state();
+    let app = make_app(state.clone());
 
     let _response = app
         .oneshot(
@@ -144,5 +146,6 @@ async fn scan_releases_lock_after_completion() {
 
     tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
 
-    assert!(!lock.load(std::sync::atomic::Ordering::SeqCst));
+    let s = state.read().await;
+    assert!(!s.scan_lock.load(std::sync::atomic::Ordering::SeqCst));
 }

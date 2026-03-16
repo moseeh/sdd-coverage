@@ -34,11 +34,9 @@ pub struct AppState {
     pub scan_started_at: Option<DateTime<Utc>>,
     pub scan_completed_at: Option<DateTime<Utc>>,
     pub scan_duration_ms: Option<i64>,
+    pub scan_lock: Arc<AtomicBool>,
     pub config: ProjectConfig,
 }
 
 // @req FR-API-001
 pub type SharedState = Arc<RwLock<AppState>>;
-
-// @req FR-API-007
-pub type ScanLock = Arc<AtomicBool>;

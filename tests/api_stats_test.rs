@@ -68,6 +68,7 @@ fn make_state_with_scan() -> SharedState {
         scan_started_at: None,
         scan_completed_at: None,
         scan_duration_ms: None,
+        scan_lock: Arc::new(std::sync::atomic::AtomicBool::new(false)),
         config: ProjectConfig {
             requirements: PathBuf::from("r.yaml"),
             source: PathBuf::from("src"),
@@ -85,6 +86,7 @@ fn make_state_no_scan() -> SharedState {
         scan_started_at: None,
         scan_completed_at: None,
         scan_duration_ms: None,
+        scan_lock: Arc::new(std::sync::atomic::AtomicBool::new(false)),
         config: ProjectConfig {
             requirements: PathBuf::from("r.yaml"),
             source: PathBuf::from("src"),
