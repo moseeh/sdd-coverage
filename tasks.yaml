@@ -97,9 +97,9 @@ tasks:
   - id: TASK-011
     requirementId: FR-COV-002
     title: "Implement project-level coverage summary"
-    status: open
+    status: done
     createdAt: "2026-03-15T00:00:00Z"
-    updatedAt: "2026-03-15T00:00:00Z"
+    updatedAt: "2026-03-16T14:01:38Z"
 
   - id: TASK-012
     requirementId: FR-COV-003

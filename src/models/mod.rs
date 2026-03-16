@@ -60,6 +60,16 @@ pub enum CoverageStatus {
     Missing,
 }
 
+// @req FR-COV-002
+#[derive(Debug, Clone, PartialEq)]
+pub struct CoverageSummary {
+    pub total: usize,
+    pub covered: usize,
+    pub partial: usize,
+    pub missing: usize,
+    pub coverage_percentage: f64,
+}
+
 // @req FR-PARSE-001
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
