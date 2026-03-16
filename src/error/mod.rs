@@ -1,6 +1,11 @@
 use std::fmt;
 use std::path::PathBuf;
 
+use axum::Json;
+use axum::http::StatusCode;
+use axum::response::IntoResponse;
+use serde_json::json;
+
 // @req FR-PARSE-003
 #[derive(Debug)]
 pub enum ParseError {
@@ -67,4 +72,36 @@ impl fmt::Display for ParseError {
             }
         }
     }
+}
+
+// @req FR-ERR-001
+impl IntoResponse for ParseError {
+    fn into_response(self) -> axum::response::Response {
+        let error_type = match &self {
+            ParseError::FileNotFound { .. } => "file_not_found",
+            ParseError::MalformedYaml { .. } => "malformed_yaml",
+            ParseError::DuplicateId { .. } => "duplicate_id",
+            ParseError::InvalidIdFormat { .. } => "invalid_id_format",
+        };
+
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({
+                "error": error_type,
+                "message": self.to_string()
+            })),
+        )
+            .into_response()
+    }
+}
+
+// @req FR-ERR-001
+pub async fn fallback_handler() -> impl IntoResponse {
+    (
+        StatusCode::NOT_FOUND,
+        Json(json!({
+            "error": "not_found",
+            "message": "The requested endpoint does not exist"
+        })),
+    )
 }
